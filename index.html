@@ -2,367 +2,398 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#526b91">
-  <link rel="manifest" href="manifest.json">
-  <title>認知課題トレーニング</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#526b91">
+<link rel="manifest" href="manifest.json">
+<title>認知課題トレーニング</title>
 
-  <style>
-    * { box-sizing: border-box; }
+<style>
+* { box-sizing: border-box; }
 
-    body {
-      margin: 0;
-      padding: 16px;
-      background: #f4f6fa;
-      color: #273449;
-      font-family: sans-serif;
-    }
+body {
+  margin: 0;
+  padding: 16px;
+  background: #f4f6fa;
+  color: #273449;
+  font-family: sans-serif;
+}
 
-    main {
-      max-width: 850px;
-      margin: auto;
-      background: white;
-      padding: 22px;
-      border-radius: 20px;
-      text-align: center;
-      min-height: 500px;
-    }
+main {
+  max-width: 1000px;
+  margin: auto;
+  background: white;
+  padding: 22px;
+  border-radius: 20px;
+  text-align: center;
+  min-height: 500px;
+}
 
-    h1 { color: #354b6b; }
+h1 { color: #354b6b; }
 
-    button, input, select {
-      font-size: 18px;
-      padding: 13px;
-      border-radius: 12px;
-    }
+button, input, select {
+  font-size: 18px;
+  padding: 13px;
+  border-radius: 12px;
+}
 
-    input, select {
-      width: 100%;
-      border: 1px solid #bdc9d9;
-      margin: 8px 0 18px;
-    }
+input, select {
+  width: 100%;
+  border: 1px solid #bdc9d9;
+  margin: 8px 0 18px;
+}
 
-    button {
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-    }
+button {
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
 
-    button:disabled {
-      opacity: 0.5;
-      cursor: default;
-    }
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
 
-    .primary {
-      background: #526b91;
-      color: white;
-      width: 100%;
-    }
+.primary {
+  background: #526b91;
+  color: white;
+  width: 100%;
+}
 
-    .rule {
-      background: #edf2f8;
-      padding: 15px;
-      border-radius: 12px;
-      font-size: 20px;
-      font-weight: bold;
-      margin: 15px 0;
-    }
+.rule {
+  background: #edf2f8;
+  padding: 15px;
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  margin: 15px 0;
+  line-height: 1.7;
+}
 
-    .hidden { display: none !important; }
+.hidden { display: none !important; }
 
-    /* 仕分けエリア */
-    .sorting-board {
-      display: grid;
-      grid-template-columns: 1fr 130px 1fr;
-      gap: 10px;
-      align-items: stretch;
-      margin: 20px 0;
-    }
+/* 仕分けエリア */
+.board-scroll {
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
 
-    .sorting-column {
-      background: #f0f3f8;
-      border-radius: 14px;
-      padding: 10px;
-      min-height: 300px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-    }
+.sorting-board {
+  display: grid;
+  gap: 10px;
+  align-items: stretch;
+  margin: 20px 0;
+  min-width: 0;
+}
 
-    .column-title {
-      font-weight: bold;
-      color: #354b6b;
-      font-size: 17px;
-      padding: 8px;
-      border-bottom: 2px solid #d3dce9;
-      width: 100%;
-    }
+.sorting-column {
+  background: #f0f3f8;
+  border-radius: 14px;
+  padding: 10px;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  min-width: 110px;
+}
 
-    .item-list {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      width: 100%;
-    }
+.column-title {
+  font-weight: bold;
+  color: #354b6b;
+  font-size: 20px;
+  padding: 8px;
+  border-bottom: 2px solid #d3dce9;
+  width: 100%;
+}
 
-    .sorted-item {
-      width: 64px;
-      height: 64px;
-      background: white;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-      flex-shrink: 0;
-    }
+.item-list {
+  display: grid;
+  grid-template-rows: repeat(5, 64px);
+  grid-auto-flow: column;
+  grid-auto-columns: 64px;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
 
-    .sorted-item svg {
-      width: 48px;
-      height: 48px;
-    }
+.sorted-item {
+  width: 64px;
+  height: 64px;
+  background: white;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+}
 
-    .result-mark {
-      position: absolute;
-      right: -7px;
-      top: -7px;
-      width: 27px;
-      height: 27px;
-      border-radius: 50%;
-      background: white;
-      font-size: 23px;
-      font-weight: bold;
-      line-height: 27px;
-      display: none;
-    }
+.sorted-item svg {
+  width: 48px;
+  height: 48px;
+}
 
-    .review-mode .result-mark {
-      display: block;
-    }
+.result-mark {
+  position: absolute;
+  right: -7px;
+  top: -7px;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: white;
+  font-size: 23px;
+  font-weight: bold;
+  line-height: 27px;
+  display: none;
+}
 
-    .mark-correct { color: #16a34a; }
-    .mark-wrong { color: #dc4444; }
+.review-mode .result-mark { display: block; }
+.mark-correct { color: #16a34a; }
+.mark-wrong { color: #dc4444; }
 
-    /* 中央の問題表示 */
-    .center-area {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding-top: 55px;
-    }
+/* 中央の問題表示 */
+.center-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 55px;
+  min-width: 0;
+}
 
-    .current-label {
-      font-size: 13px;
-      color: #78869a;
-      margin-bottom: 12px;
-    }
+.current-label {
+  font-size: 13px;
+  color: #78869a;
+  margin-bottom: 12px;
+}
 
-    .current-shape {
-      width: 110px;
-      height: 110px;
-      display: grid;
-      place-items: center;
-      background: #fafbfd;
-      border-radius: 15px;
-    }
+.current-shape {
+  width: 110px;
+  height: 110px;
+  display: grid;
+  place-items: center;
+  background: #fafbfd;
+  border-radius: 15px;
+}
 
-    .current-shape svg {
-      width: 90px;
-      height: 90px;
-    }
+.current-shape svg {
+  width: 90px;
+  height: 90px;
+}
 
-    .targets {
-      display: flex;
-      gap: 12px;
-      margin-top: 15px;
-    }
+/* 回答ボタン */
+.targets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));
+  gap: 10px;
+  margin-top: 15px;
+}
 
-    .target {
-      flex: 1;
-      min-height: 65px;
-      background: #e9eef6;
-      color: #354b6b;
-    }
+.target {
+  min-height: 65px;
+  background: #e9eef6;
+  color: #354b6b;
+  font-size: 22px;
+}
 
-    .target:hover:not(:disabled) {
-      background: #dce6f4;
-    }
+.target:hover:not(:disabled) {
+  background: #dce6f4;
+}
 
-    #feedback {
-      min-height: 28px;
-      margin: 12px;
-    }
+#feedback {
+  min-height: 28px;
+  margin: 12px;
+}
 
-    .result-panel {
-      background: #edf2f8;
-      border-radius: 15px;
-      padding: 20px;
-      margin-top: 20px;
-    }
+.result-panel {
+  background: #edf2f8;
+  border-radius: 15px;
+  padding: 20px;
+  margin-top: 20px;
+}
 
-    .result-panel h2 {
-      color: #354b6b;
-    }
+.result-panel h2 { color: #354b6b; }
 
-    /* 選択した対象物の移動アニメーション */
-    .flying-item {
-      position: fixed;
-      z-index: 1000;
-      width: 64px;
-      height: 64px;
-      background: white;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-      pointer-events: none;
-      transition:
-        left 0.5s ease,
-        top 0.5s ease,
-        transform 0.5s ease;
-    }
+/* 移動アニメーション */
+.flying-item {
+  position: fixed;
+  z-index: 1000;
+  width: 64px;
+  height: 64px;
+  background: white;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  pointer-events: none;
+  transition:
+    left 0.5s ease,
+    top 0.5s ease,
+    transform 0.5s ease;
+}
 
-    .flying-item svg {
-      width: 48px;
-      height: 48px;
-    }
+.flying-item svg {
+  width: 48px;
+  height: 48px;
+}
 
-    @media(max-width: 560px) {
-      body { padding: 8px; }
-      main { padding: 12px; }
+.summary-list {
+  text-align: left;
+  display: inline-block;
+  line-height: 1.9;
+}
 
-      .sorting-board {
-        grid-template-columns: 1fr 95px 1fr;
-        gap: 5px;
-      }
+@media(max-width: 560px) {
+  body { padding: 8px; }
+  main { padding: 12px; }
 
-      .sorting-column {
-        padding: 6px;
-        min-height: 260px;
-      }
+  .sorting-column {
+    padding: 6px;
+    min-height: 260px;
+    min-width: 90px;
+  }
 
-      .sorted-item {
-        width: 52px;
-        height: 52px;
-      }
+  .item-list {
+    grid-template-rows: repeat(5, 52px);
+    grid-auto-columns: 52px;
+    gap: 6px;
+  }
 
-      .sorted-item svg {
-        width: 40px;
-        height: 40px;
-      }
+  .sorted-item {
+    width: 52px;
+    height: 52px;
+  }
 
-      .center-area { padding-top: 55px; }
+  .sorted-item svg {
+    width: 40px;
+    height: 40px;
+  }
 
-      .current-shape {
-        width: 85px;
-        height: 85px;
-      }
+  .center-area { padding-top: 55px; }
 
-      .current-shape svg {
-        width: 72px;
-        height: 72px;
-      }
+  .current-shape {
+    width: 85px;
+    height: 85px;
+  }
 
-      .column-title { font-size: 14px; }
-      .target { font-size: 16px; padding: 10px 5px; }
-    }
-  </style>
+  .current-shape svg {
+    width: 72px;
+    height: 72px;
+  }
+
+  .column-title { font-size: 18px; }
+  .target { font-size: 20px; padding: 10px 5px; }
+}
+</style>
 </head>
 
 <body>
 <main>
 
-  <!-- ホーム画面 -->
-  <section id="home">
-    <h1>認知課題トレーニング</h1>
-    <p>ルールに従って図形を分類しましょう。</p>
+<!-- ホーム画面 -->
+<section id="home">
+  <h1>認知課題トレーニング</h1>
+  <p>ルールに従って図形を分類しましょう。</p>
 
-    <label>参加者ID</label>
-    <input id="participant" placeholder="例：P001">
+  <label>参加者ID</label>
+  <input id="participant" placeholder="例：P001">
 
-    <label>難易度</label>
-    <select id="level">
-      <option value="1">Lv.1 色で分類</option>
-      <option value="2">Lv.2 形で分類</option>
-    </select>
+  <label>分類するルール</label>
+  <select id="level">
+    <option value="color">色で分類</option>
+    <option value="shape">形で分類</option>
+  </select>
 
-    <div class="rule" id="homeRule">
-      赤色は左、青色は右
-    </div>
+  <label>分類する種類</label>
+  <select id="typeCount">
+    <option value="2">2種類</option>
+    <option value="3">3種類</option>
+    <option value="4">4種類</option>
+    <option value="5">5種類</option>
+  </select>
 
-    <button class="primary" onclick="startGame()">
-      開始する
+  <label>仕分けする個数</label>
+  <select id="questionCount">
+    <option value="10">10個</option>
+    <option value="20">20個</option>
+    <option value="30">30個</option>
+    <option value="40">40個</option>
+    <option value="50">50個</option>
+  </select>
+
+  <div class="rule" id="homeRule"></div>
+
+  <button class="primary" onclick="startGame()">
+    開始する
+  </button>
+</section>
+
+<!-- 課題画面 -->
+<section id="game" class="hidden">
+
+  <h2 id="questionNumber"></h2>
+
+  <div class="rule" id="gameRule"></div>
+
+  <div class="board-scroll">
+    <div class="sorting-board" id="sortingBoard"></div>
+  </div>
+
+  <div class="current-label">今回の対象物</div>
+  <div class="current-shape" id="shapeArea"></div>
+
+  <div id="feedback"></div>
+
+  <div class="targets" id="answerButtons"></div>
+
+  <!-- 最終結果 -->
+  <div id="resultPanel" class="result-panel hidden">
+    <h2>答え合わせ</h2>
+    <h1 id="score"></h1>
+    <p id="accuracy"></p>
+    <p>〇：正解　✕：不正解</p>
+
+    <div id="categorySummary" class="summary-list"></div>
+
+    <p id="averageTime"></p>
+
+    <p>自分が分類した結果を確認してみましょう。</p>
+
+    <button class="primary" onclick="location.reload()">
+      もう一度挑戦する
     </button>
-  </section>
+  </div>
 
-  <!-- 課題画面 -->
-  <section id="game" class="hidden">
-
-    <h2 id="questionNumber"></h2>
-
-    <div class="rule" id="gameRule"></div>
-
-    <div class="sorting-board">
-
-      <!-- 左側 -->
-      <div class="sorting-column" id="leftColumn">
-        <div class="column-title">左側</div>
-        <div class="item-list" id="leftList"></div>
-      </div>
-
-      <!-- 中央 -->
-      <div class="center-area">
-        <div class="current-label">今回の対象物</div>
-        <div class="current-shape" id="shapeArea"></div>
-      </div>
-
-      <!-- 右側 -->
-      <div class="sorting-column" id="rightColumn">
-        <div class="column-title">右側</div>
-        <div class="item-list" id="rightList"></div>
-      </div>
-
-    </div>
-
-    <div id="feedback"></div>
-
-    <div class="targets" id="answerButtons">
-      <button class="target" id="leftButton"
-        onclick="answer('left')">
-        ← 左に分類
-      </button>
-
-      <button class="target" id="rightButton"
-        onclick="answer('right')">
-        右に分類 →
-      </button>
-    </div>
-
-    <!-- 最終結果 -->
-    <div id="resultPanel" class="result-panel hidden">
-      <h2>答え合わせ</h2>
-      <h1 id="score"></h1>
-      <p id="accuracy"></p>
-      <p>〇：正解　✕：不正解</p>
-      <p>自分が分類した結果を確認してみましょう。</p>
-      <button class="primary" onclick="location.reload()">
-        もう一度挑戦する
-      </button>
-    </div>
-
-  </section>
-
+</section>
 </main>
 
 <script>
+const COLORS = [
+  { name: "赤色", value: "#e74c3c" },
+  { name: "青色", value: "#3498db" },
+  { name: "黄色", value: "#f1c40f" },
+  { name: "緑色", value: "#27ae60" },
+  { name: "紫色", value: "#9b59b6" }
+];
+
+const SHAPES = [
+  { name: "丸", value: "circle" },
+  { name: "三角", value: "triangle" },
+  { name: "四角", value: "square" },
+  { name: "星", value: "star" },
+  { name: "ひし形", value: "diamond" }
+];
+
 let participantId = "";
-let level = 1;
+let level = "color";
+let typeCount = 2;
+let questionCount = 10;
+
+let categories = [];
+let questionSequence = [];
 let current = null;
 let count = 0;
 let correct = 0;
@@ -370,35 +401,172 @@ let startedAt = 0;
 let records = [];
 let isAnimating = false;
 
-function ruleText() {
-  return level === 1
-    ? "赤色は左、青色は右"
-    : "丸は左、三角は右";
-}
+/* 配列をシャッフル */
+function shuffle(array) {
+  const result = [...array];
 
-document.getElementById("level").onchange = function() {
-  level = Number(this.value);
-  document.getElementById("homeRule").textContent = ruleText();
-};
-
-// 図形のSVGを作る
-function createShapeSVG(color, shape) {
-  if (shape === "circle") {
-    return `
-      <svg viewBox="0 0 110 110">
-        <circle cx="55" cy="55" r="45" fill="${color}"/>
-      </svg>
-    `;
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
   }
 
-  return `
-    <svg viewBox="0 0 110 110">
-      <polygon points="55,5 105,100 5,100" fill="${color}"/>
-    </svg>
-  `;
+  return result;
 }
 
-// 開始
+/* 分類ルールを作る */
+function createCategories() {
+  const source = level === "color" ? COLORS : SHAPES;
+
+  return shuffle(source)
+    .slice(0, typeCount)
+    .map((item, index) => ({
+      number: index + 1,
+      name: item.name,
+      value: item.value
+    }));
+}
+
+/* ルールの文章 */
+function ruleText() {
+  return categories
+    .map(category =>
+      `${category.name}は${numberLabel(category.number)}`
+    )
+    .join("、");
+}
+
+function numberLabel(number) {
+  return ["", "①", "②", "③", "④", "⑤"][number];
+}
+
+/* ホーム画面のルール例を更新 */
+function updateHomeRule() {
+  const selectedLevel = document.getElementById("level").value;
+  const selectedCount = Number(
+    document.getElementById("typeCount").value
+  );
+
+  const source = selectedLevel === "color" ? COLORS : SHAPES;
+
+  document.getElementById("homeRule").textContent =
+    source.slice(0, selectedCount)
+      .map((item, index) =>
+        `${item.name}は${numberLabel(index + 1)}`
+      )
+      .join("、");
+}
+
+document.getElementById("level").onchange = updateHomeRule;
+document.getElementById("typeCount").onchange = updateHomeRule;
+
+updateHomeRule();
+
+/* 図形SVGを作る */
+function createShapeSVG(color, shape) {
+  let content = "";
+
+  switch (shape) {
+    case "circle":
+      content = `<circle cx="55" cy="55" r="45" fill="${color}"/>`;
+      break;
+
+    case "triangle":
+      content = `<polygon points="55,5 105,100 5,100" fill="${color}"/>`;
+      break;
+
+    case "square":
+      content = `<rect x="10" y="10" width="90" height="90" fill="${color}"/>`;
+      break;
+
+    case "star":
+      content = `<polygon points="55,3 68,38 105,40 77,64 86,103 55,82 24,103 33,64 5,40 42,38" fill="${color}"/>`;
+      break;
+
+    case "diamond":
+      content = `<polygon points="55,5 105,55 55,105 5,55" fill="${color}"/>`;
+      break;
+  }
+
+  return `<svg viewBox="0 0 110 110">${content}</svg>`;
+}
+
+/* 対象物を作る */
+function createStimulus(category) {
+  let color;
+  let shape;
+
+  if (level === "color") {
+    color = category.value;
+    shape = randomItem(SHAPES).value;
+  } else {
+    color = randomItem(COLORS).value;
+    shape = category.value;
+  }
+
+  return { color, shape };
+}
+
+function randomItem(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+/* 問題の出題順を作る */
+function createQuestionSequence() {
+  const sequence = [];
+
+  for (let i = 0; i < questionCount; i++) {
+    sequence.push(categories[i % typeCount]);
+  }
+
+  return shuffle(sequence);
+}
+
+/* 仕分け画面を作る */
+function createSortingBoard() {
+  const board = document.getElementById("sortingBoard");
+  board.innerHTML = "";
+
+  board.style.gridTemplateColumns =
+    `repeat(${typeCount}, minmax(90px, 1fr))`;
+
+  board.style.minWidth =
+    `${typeCount * 100}px`;
+
+  categories.forEach(category => {
+    const column = document.createElement("div");
+    column.className = "sorting-column";
+    column.id = `column-${category.number}`;
+
+    column.innerHTML = `
+      <div class="column-title">
+        ${numberLabel(category.number)}
+      </div>
+      <div class="item-list" id="list-${category.number}"></div>
+    `;
+
+    board.appendChild(column);
+  });
+}
+
+/* 回答ボタンを作る */
+function createAnswerButtons() {
+  const container = document.getElementById("answerButtons");
+  container.innerHTML = "";
+
+  categories.forEach(category => {
+    const button = document.createElement("button");
+
+    button.className = "target";
+    button.id = `answer-${category.number}`;
+    button.textContent = numberLabel(category.number);
+
+    button.onclick = () => answer(category.number);
+
+    container.appendChild(button);
+  });
+}
+
+/* 開始 */
 function startGame() {
   participantId =
     document.getElementById("participant").value.trim();
@@ -409,86 +577,97 @@ function startGame() {
     return;
   }
 
-  level = Number(document.getElementById("level").value);
+  level = document.getElementById("level").value;
+  typeCount = Number(document.getElementById("typeCount").value);
+  questionCount = Number(
+    document.getElementById("questionCount").value
+  );
 
   count = 0;
   correct = 0;
   records = [];
   isAnimating = false;
 
-  document.getElementById("leftList").innerHTML = "";
-  document.getElementById("rightList").innerHTML = "";
+  categories = createCategories();
+  questionSequence = createQuestionSequence();
 
   document.getElementById("home").classList.add("hidden");
   document.getElementById("game").classList.remove("hidden");
 
-  document.getElementById("gameRule").textContent = ruleText();
+  document.getElementById("gameRule").textContent =
+    ruleText();
 
   document.getElementById("answerButtons").classList.remove("hidden");
   document.getElementById("resultPanel").classList.add("hidden");
 
-  document.getElementById("leftColumn").classList.remove("review-mode");
-  document.getElementById("rightColumn").classList.remove("review-mode");
+  createSortingBoard();
+  createAnswerButtons();
 
   nextQuestion();
 }
 
-// 次の問題
+/* 次の問題 */
 function nextQuestion() {
-  if (count >= 10) {
+  if (count >= questionCount) {
     finishGame();
     return;
   }
 
-  const color = Math.random() < 0.5 ? "red" : "blue";
-  const shape = Math.random() < 0.5 ? "circle" : "triangle";
-
-  const answerSide = level === 1
-    ? (color === "red" ? "left" : "right")
-    : (shape === "circle" ? "left" : "right");
+  const category = questionSequence[count];
+  const stimulus = createStimulus(category);
 
   current = {
-    color,
-    shape,
-    answerSide
+    color: stimulus.color,
+    shape: stimulus.shape,
+    correctCategory: category.number
   };
 
   document.getElementById("shapeArea").innerHTML =
-    createShapeSVG(color, shape);
+    createShapeSVG(current.color, current.shape);
 
   document.getElementById("questionNumber").textContent =
-    `${count + 1} / 10 問`;
+    `${count + 1} / ${questionCount} 問`;
 
   document.getElementById("feedback").textContent = "";
 
-  document.getElementById("leftButton").disabled = false;
-  document.getElementById("rightButton").disabled = false;
+  categories.forEach(category => {
+    document.getElementById(
+      `answer-${category.number}`
+    ).disabled = false;
+  });
 
   startedAt = performance.now();
 }
 
-// 選択した対象物を左右に移動させる
-function answer(side) {
+/* 回答 */
+function answer(selectedNumber) {
   if (!current || isAnimating) return;
 
   isAnimating = true;
 
-  document.getElementById("leftButton").disabled = true;
-  document.getElementById("rightButton").disabled = true;
+  categories.forEach(category => {
+    document.getElementById(
+      `answer-${category.number}`
+    ).disabled = true;
+  });
 
   const reactionTime = Math.round(performance.now() - startedAt);
-  const isCorrect = side === current.answerSide;
+
+  const isCorrect =
+    selectedNumber === current.correctCategory;
 
   if (isCorrect) correct++;
 
   const record = {
     participantId,
     level,
+    typeCount,
+    questionCount,
     trial: count + 1,
     color: current.color,
     shape: current.shape,
-    correctSide: current.answerSide,
-    answer: side,
+    correctCategory: current.correctCategory,
+    selectedCategory: selectedNumber,
     correct: isCorrect,
     reactionTimeMs: reactionTime,
     timestamp: new Date().toISOString()
@@ -496,21 +675,20 @@ function answer(side) {
 
   records.push(record);
 
-  // 現在の図形の位置を取得
+  /* 現在の図形の位置 */
   const source = document.getElementById("shapeArea");
   const sourceRect = source.getBoundingClientRect();
 
-  // 移動先を取得
+  /* 移動先 */
   const targetList = document.getElementById(
-    side === "left" ? "leftList" : "rightList"
+    `list-${selectedNumber}`
   );
 
-  const targetRect = targetList.getBoundingClientRect();
-
-  // 飛行する図形を作成
+  /* 飛行する図形 */
   const flying = document.createElement("div");
   flying.className = "flying-item";
-  flying.innerHTML = createShapeSVG(current.color, current.shape);
+  flying.innerHTML =
+    createShapeSVG(current.color, current.shape);
 
   flying.style.left =
     (sourceRect.left + sourceRect.width / 2 - 32) + "px";
@@ -520,14 +698,16 @@ function answer(side) {
 
   document.body.appendChild(flying);
 
-  // 移動先の位置を計算
+  /* 移動先の位置を計算 */
+  const targetRect = targetList.getBoundingClientRect();
+
   const destinationX =
     targetRect.left + targetRect.width / 2 - 32;
 
   const destinationY =
     targetRect.bottom - 70;
 
-  // アニメーション開始
+  /* アニメーション開始 */
   requestAnimationFrame(() => {
     flying.style.left = destinationX + "px";
     flying.style.top = destinationY + "px";
@@ -536,12 +716,13 @@ function answer(side) {
 
   current = null;
 
-  // アニメーション終了後、仕分けエリアに追加
+  /* アニメーション終了後に仕分けエリアへ追加 */
   setTimeout(() => {
     flying.remove();
 
     const item = document.createElement("div");
     item.className = "sorted-item";
+
     item.innerHTML =
       createShapeSVG(record.color, record.shape) +
       `<span class="result-mark ${
@@ -553,7 +734,7 @@ function answer(side) {
     count++;
     isAnimating = false;
 
-    if (count >= 10) {
+    if (count >= questionCount) {
       finishGame();
     } else {
       nextQuestion();
@@ -562,38 +743,76 @@ function answer(side) {
   }, 550);
 }
 
-// 最終結果と答え合わせ
+/* 最終結果 */
 function finishGame() {
   document.getElementById("questionNumber").textContent =
-    "10問終了！";
+    `${questionCount}問終了！`;
 
   document.getElementById("shapeArea").innerHTML = "";
 
   document.getElementById("answerButtons").classList.add("hidden");
 
-  document.getElementById("leftColumn").classList.add("review-mode");
-  document.getElementById("rightColumn").classList.add("review-mode");
+  categories.forEach(category => {
+    document.getElementById(
+      `column-${category.number}`
+    ).classList.add("review-mode");
+  });
 
   document.getElementById("score").textContent =
-    `${correct} / 10 問正解`;
+    `${correct} / ${questionCount} 問正解`;
 
   document.getElementById("accuracy").textContent =
-    `正答率：${correct * 10}%`;
+    `正答率：${Math.round(correct / questionCount * 100)}%`;
+
+  /* 種類ごとの正答数 */
+  let summaryHTML = "<h3>分類先ごとの結果</h3>";
+
+  categories.forEach(category => {
+    const related = records.filter(
+      record => record.correctCategory === category.number
+    );
+
+    const correctCount = related.filter(
+      record => record.correct
+    ).length;
+
+    summaryHTML += `
+      <div>
+        ${numberLabel(category.number)}：
+        ${correctCount} / ${related.length} 問正解
+      </div>
+    `;
+  });
+
+  document.getElementById("categorySummary").innerHTML =
+    summaryHTML;
+
+  const totalTime = records.reduce(
+    (sum, record) => sum + record.reactionTimeMs, 0
+  );
+
+  const averageTime = Math.round(totalTime / records.length);
+
+  document.getElementById("averageTime").textContent =
+    `平均反応時間：${averageTime} ms`;
 
   document.getElementById("resultPanel").classList.remove("hidden");
 
-  // 記録を保存
+  /* 記録を保存 */
+  const oldRecords = JSON.parse(
+    localStorage.getItem("cognitiveTrainingRecords") || "[]"
+  );
+
   localStorage.setItem(
     "cognitiveTrainingRecords",
-    JSON.stringify(records)
+    JSON.stringify([...oldRecords, ...records])
   );
 }
 
-// Service Worker
+/* Service Worker */
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./sw.js");
 }
 </script>
-
 </body>
 </html>
